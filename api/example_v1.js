@@ -35,4 +35,9 @@ routes.get('/hello/*', function (req, res, next) {
 	res.end();
 });
 
+// routes.get('/todos', todoController.getAll);
+// routes.get('/todos/:id', todoController.getOneById);
+// routes.get('/todos/errordemo', todoController.errorDemo);
+// routes.all('/todos*', todoController.catchAll);
+
 module.exports = routes;
