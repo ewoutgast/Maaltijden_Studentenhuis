@@ -8,6 +8,9 @@ var bodyParser = require('body-parser');
 var config = require('./config/general');
 // var db = require('./config/db');
 
+// Route files
+var routes_v1 = require('./api/routes_v1');
+
 // Start app
 var app = express();
 
@@ -24,7 +27,7 @@ app.get('/', function(req, res) {
     res.status(200);
     res.send('Usages: api/v1/[url]');
 });
-app.use('/api/v1', './api/routes_v1.js');
+app.use('/api/v1', routes_v1);
 app.use('*', function (req, res) {
 	res.status(404).json({
         message: 'No matching endnode!'
