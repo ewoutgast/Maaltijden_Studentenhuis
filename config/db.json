@@ -1,0 +1,7 @@
+{
+    "port": "3306",
+    "host": "localhost",
+    "user": "maaltijden_studentenhuis",
+    "password": "maaltijden_studentenhuis",
+    "database": "maaltijden_studentenhuis"
+}
