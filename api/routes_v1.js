@@ -16,4 +16,6 @@ routes.use('*', function (req, res, next) {
 routes.get('/meals', meal.getAll);
 routes.get('/meal/:id', meal.getById);
 
+routes.post('/meal/join/:id', meal.joinMealById);
+
 module.exports = routes;
