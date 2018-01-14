@@ -9,23 +9,23 @@ module.exports = {
             (typeof body.user_id !== 'undefined' && body.user_id) &&
             (typeof body.guest_amount !== 'undefined' && body.guest_amount)
         ){
-            // // Check user already joined
-            // if (meal.checkUserAlreadyJoined(body.meal_id, body.user_id)) {
-            //     res.status(500).json({
-            //         status: {
-            //             message: 'User already joined'
-            //         }
-            //     }).end();   
-            // };
-            // 
-            // // Check max amount
-            // if (meal.checkMaxAmount(body.meal_id, body.guest_amount)) {
-            //     res.status(500).json({
-            //         status: {
-            //             message: 'Max amount guests'
-            //         }
-            //     }).end();   
-            // };
+            // Check user already joined
+            if (!checkUserAlreadyJoined(body.meal_id, body.user_id)) {
+                res.status(400).json({
+                    status: {
+                        message: 'User already joined'
+                    }
+                }).end();
+            };
+            
+            // Check max amount
+            if (!checkMaxAmount(body.meal_id, body.guest_amount)) {
+                res.status(400).json({
+                    status: {
+                        message: 'Max amount guests'
+                    }
+                }).end();   
+            };
             
             // Join meal
             var query = 'INSERT INTO meals_users (meal_id, user_id, guest_amount) VALUES (' + body.meal_id + ',' + body.user_id + ',' + body.guest_amount + ')';
@@ -51,3 +51,21 @@ module.exports = {
         };
     }
 };
+
+
+function checkUserAlreadyJoined(meal_id, user_id) {
+    var query = 'SELECT id FROM meals_users WHERE meal_id = ' + meal_id + ' AND user_id = ' + user_id + ' LIMIT 1';
+
+    connection.query(query, function (error, rows, fields) {
+        if (error) {
+            console.log(error);
+            return false;
+        };
+    });
+    
+    return true;
+}
+
+function checkMaxAmount(meal_id, guest_amount) {
+    return true;
+}
