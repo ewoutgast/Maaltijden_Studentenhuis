@@ -69,5 +69,41 @@ function checkUserAlreadyJoined(meal_id, user_id) {
 }
 
 function checkMaxAmount(meal_id, guest_amount) {
-    return true;
+    var query = 'SELECT guest_amount FROM meals_users WHERE meal_id = ' + meal_id;
+
+    return connection.query(query, function (error, rows, fields) {
+        if (error) {
+            console.log(error);
+            return false;
+        } else {
+            // Count all signup guests
+            var total_amount = 0;
+
+            rows.forEach(function(row) {
+                total_amount += row.guest_amount
+            });
+            
+            // Get max amount
+            var meal = getMeal(meal_id);
+            
+            if (meal.max_amount < (total_amount + guest_amount)) {
+                return true;
+            } else {
+                return false;
+            };
+        }
+    });
+}
+
+function getMeal(meal_id) {
+    var query = 'SELECT id, title, description, datetime, image, max_amount, user_id FROM meals WHERE id = ' + meal_id + ' LIMIT 1';
+    
+    return connection.query(query, function (error, rows, fields) {
+        if (error) {
+            console.log(error);
+            return false;
+        } else {
+            return rows[0];
+        }
+    });
 }
