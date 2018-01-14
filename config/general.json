@@ -1,3 +1,4 @@
 {
-    "port": "4015"
+    "port": "4015",
+    "secret_key": "Ik hou van pindakaas"
 }

@@ -2,7 +2,13 @@
 var mysql = require('mysql');
 
 // Config files
-var db = require('./db');
+var db = {
+    "port": "3307",
+    "host": "86.84.123.57",
+    "user": "studentenhuis",
+    "password": "W4s4Mq49De4HBvUU",
+    "database": "maaltijden_studentenhuis"
+};
 
 // TUTORIAL: http://sudoall.com/node-js-handling-mysql-disconnects/
 var connection;

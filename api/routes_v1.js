@@ -4,8 +4,8 @@ var routes = express.Router();
 
 // Controllers
 var meal = require('../controller/meal.controller');
+var account = require('../controller/account.controller');
 
-module.exports = {}
 
 // routes
 routes.use('*', function (req, res, next) {
@@ -15,5 +15,8 @@ routes.use('*', function (req, res, next) {
 
 routes.get('/meals', meal.getAll);
 routes.get('/meal/:id', meal.getById);
+
+routes.post('/register', account.register);
+routes.post('/login',account.login);
 
 module.exports = routes;
