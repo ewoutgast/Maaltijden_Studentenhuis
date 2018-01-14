@@ -118,7 +118,7 @@ function handleNewMealImg(newMealImg, newMealReq, res, mealId){
         var imgDate = new Date(newMealReq.datetime);
         var imgDateStr = imgDate.toISOString().replace(/(:)|(00.000Z)/g, '');
         imgName = imgDateStr + '_' + newMealReq.user + '_' + newMealReq.title + '.' + extension;
-        console.log(imgName);
+        
         var targetPath = path.resolve('./uploads/meal_img/' + imgName);
 
         insertImgDb(tempPath, targetPath, imgName, mealId, res);;
