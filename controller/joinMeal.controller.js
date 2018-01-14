@@ -52,20 +52,19 @@ module.exports = {
     }
 };
 
-
 function checkUserAlreadyJoined(meal_id, user_id) {
     var query = 'SELECT id FROM meals_users WHERE meal_id = ' + meal_id + ' AND user_id = ' + user_id + ' LIMIT 1';
 
-    connection.query(query, function (error, rows, fields) {
+    return connection.query(query, function (error, rows, fields) {
         if (error) {
             console.log(error);
             return false;
         } else if (rows.length != 1) {
             return false;
+        } else {
+            return true;
         }
     });
-    
-    return true;
 }
 
 function checkMaxAmount(meal_id, guest_amount) {
@@ -85,7 +84,7 @@ function checkMaxAmount(meal_id, guest_amount) {
             
             // Get max amount
             var meal = getMeal(meal_id);
-            
+console.log(meal, meal.max_amount); // TODO!
             if (meal.max_amount < (total_amount + guest_amount)) {
                 return true;
             } else {
