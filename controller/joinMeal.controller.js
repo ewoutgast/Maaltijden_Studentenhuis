@@ -60,7 +60,9 @@ function checkUserAlreadyJoined(meal_id, user_id) {
         if (error) {
             console.log(error);
             return false;
-        };
+        } else if (rows.length != 1) {
+            return false;
+        }
     });
     
     return true;
