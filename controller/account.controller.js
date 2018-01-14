@@ -1,5 +1,5 @@
 var db = require('../config/connection');
-var config = require('./config/general');
+var config = require('../config/general');
 var bcrypt = require('bcrypt');
 var jwt = require('jwt-simple');
 const saltRounds = 20;
@@ -17,7 +17,7 @@ module.exports = {
             if(getUser(email).lenght != 0){
                 res.status(400).json({
                     status:{
-                        message: 'Email al in gebruik';
+                        message: 'Email al in gebruik'
                     }
                 }).end();
             }
@@ -34,7 +34,7 @@ module.exports = {
             if(!ress){
                 res.status(400).json({
                     status:{
-                        message: 'Wachtwoord ongeldig';
+                        message: 'Wachtwoord ongeldig'
                     }
                 }).end();
             }
@@ -52,19 +52,19 @@ module.exports = {
                     }
                 }).end();
             }
-        }
+        });
     },
 };
 
 
 //gebruiker ophalen
 function getUser(email){
-    db.query('select * from users where email = ?',email , function(error, rows)){
+    db.query('select * from users where email = ?',email , function(error, rows){
         if(error){
             console.log(error.stack);
             res.status(500).json({
                 status:{
-                   message: 'Er ging iets mis, probeer het opnieuw';
+                   message: 'Er ging iets mis, probeer het opnieuw'
                 }
             }).end();
         }
@@ -72,7 +72,7 @@ function getUser(email){
             if(rows.count() > 1){
                 res.status(400).json({
                     status:{
-                        message: 'Gebruiker niet gevonden';
+                        message: 'Gebruiker niet gevonden'
                     }
                 }).end();
             }  
@@ -80,7 +80,7 @@ function getUser(email){
                 return rows[0];
             }
         }
-    }
+    });
 }
 //saven new user to the db
 function saveNewUser(name, email, password){
@@ -90,24 +90,24 @@ function saveNewUser(name, email, password){
             email: email,
             password: hash
         };
-        db.query('INSERT INTO users (name, email, password) VALUES ?', [values], function(error)){
+        db.query('INSERT INTO users (name, email, password) VALUES ?', [values], function(error){
             if(error){
                 console.log(error.stack);
                 res.status(500).json({
                     status:{
-                       message: 'Er ging iets mis, probeer het opnieuw';
+                       message: 'Er ging iets mis, probeer het opnieuw'
                     }
                 }).end();
             }
             else{
                 res.status(200).json({
                     status:{
-                       message: 'Gebruiker geregistreerd';
+                       message: 'Gebruiker geregistreerd'
                     }
                 }).end();
             }
-        }
-    }
+        });
+    });
 }
 
 //values validation
@@ -117,7 +117,7 @@ function validation(email, name, password, secret_key){
     if(name.legnth < 3){
         res.status(400).json({
             status:{
-                message: 'Naam ongeldig';
+                message: 'Naam ongeldig'
             }
         }).end();
     }
@@ -125,7 +125,7 @@ function validation(email, name, password, secret_key){
     if(!(password.length >= 6 && /\d/.test(password) && /\W/.test(password))){
         res.status(400).json({
             status:{
-                message: 'Gebruik een sterk wachtwoord.';
+                message: 'Gebruik een sterk wachtwoord.'
             }
         }).end();
     }
@@ -133,7 +133,7 @@ function validation(email, name, password, secret_key){
     if(!secret_key.equals('12345')){
         res.status(400).json({
             status:{
-                message: 'Geheime sleutel ongeldig';
+                message: 'Geheime sleutel ongeldig'
             }
         }).end();
     }
@@ -141,7 +141,7 @@ function validation(email, name, password, secret_key){
     if(!emailcheck.test(email)){
         res.status(400).json({
             status:{
-                message: 'Emailadres ongeldig';
+                message: 'Emailadres ongeldig'
             }
         }).end();
     }
