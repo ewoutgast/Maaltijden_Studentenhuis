@@ -6,6 +6,7 @@ var upload = multer({ dest: 'uploads/' });
 
 // Controllers
 var meal = require('../controller/meal.controller');
+var newMeal = require('../controller/newMeal.controller');
 
 module.exports = {}
 
@@ -18,6 +19,6 @@ routes.use('*', function (req, res, next) {
 routes.get('/meals', meal.getAll);
 routes.get('/meal/:id', meal.getById);
 
-routes.post('/new_meal', upload.single('newMealImg'), meal.newMeal);
+routes.post('/new_meal', upload.single('newMealImg'), newMeal.newMeal);
 
 module.exports = routes;
