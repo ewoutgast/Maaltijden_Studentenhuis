@@ -73,6 +73,7 @@ module.exports = {
     }
 };
 
+//Checks if new meal request has all needed fields
 function checkNewMealReq(newMealReq){
     var date = new Date(newMealReq.datetime);
     var curDate = new Date();
@@ -83,6 +84,7 @@ function checkNewMealReq(newMealReq){
     return true;
 }
 
+//Inserts new meal into DB
 function insertNewMeal(newMealImg, newMealReq, res){
     connection.query('INSERT INTO meals SET ?', {title: newMealReq.title, description: newMealReq.desc, datetime: newMealReq.datetime, max_amount: newMealReq.max_people, user_id: newMealReq.user}, function (error, results, fields) {
         if(error){
@@ -106,6 +108,7 @@ function insertNewMeal(newMealImg, newMealReq, res){
     });
 }
 
+//Checks the image for the new meal and gives it a name
 function handleNewMealImg(newMealImg, newMealReq, res, mealId){
     var imgName = 'undefined.png';
     if(newMealImg != undefined){
@@ -113,30 +116,16 @@ function handleNewMealImg(newMealImg, newMealReq, res, mealId){
         var extension = newMealImg.originalname.split('.').pop();
 
         var imgDate = new Date(newMealReq.datetime);
-        var imgDateStr = imgDate.toISOString();
+        var imgDateStr = imgDate.toISOString().replace(/(:)|(00.000Z)/g, '');
         imgName = imgDateStr + '_' + newMealReq.user + '_' + newMealReq.title + '.' + extension;
-
+        console.log(imgName);
         var targetPath = path.resolve('./uploads/meal_img/' + imgName);
 
-        checkFileUploaded(tempPath, () =>{
-            console.log(3);
-            insertImgDb(tempPath, targetPath, imgName, mealId, res);
-        });
+        insertImgDb(tempPath, targetPath, imgName, mealId, res);;
     }
 }
 
-//Onderstaand werkt nog niet
-function checkFileUploaded(tempPath, callback){
-    fs.access(tempPath, (err) => {
-        if(err){
-            setTimeout(() => { console.log(1); checkFileUploaded(tempPath, callback); }, 250);
-        }else{
-            console.log(2);
-            callback();
-        }
-    });
-}
-
+//Inserts imagename into DB and puts the image in the right folder
 function insertImgDb(tempPath, targetPath, imgName, mealId, res){
     fs.rename(tempPath, targetPath, function(error){
         if(error) {
