@@ -1,7 +1,7 @@
 # Maaltijden Studentenhuis
 ## Endnodes
 
-- **register:** `[api/v1/register]` (POST: name, email, password, secret_key)
+- **register:** `[api/v1/register]` (POST: name, email(6 karakters, 2 speciale tekens, 1 digit), password, secret_key)
 - **login:** `[api/v1/login]` (POST: email, password)
 
 
