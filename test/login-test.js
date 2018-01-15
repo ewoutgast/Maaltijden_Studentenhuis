@@ -134,7 +134,7 @@ describe('user login',function(){
                 secret_key: config.reg_key
             })
         });
-        it('POST /api/v1/register2',function(done)
+        it('POST /api/v1/login',function(done)
         {
             chai.request(server)
             .post('/api/v1/login')
@@ -162,7 +162,7 @@ describe('user login',function(){
                 secret_key: config.reg_key
             })
         });
-        it('POST /api/v1/register2',function(done)
+        it('POST /api/v1/login',function(done)
         {
             chai.request(server)
             .post('/api/v1/login')
@@ -189,7 +189,7 @@ describe('user login',function(){
                 secret_key: config.reg_key
             })
         });
-        it('POST /api/v1/register2',function(done)
+        it('POST /api/v1/login',function(done)
         {
             chai.request(server)
             .post('/api/v1/login')
