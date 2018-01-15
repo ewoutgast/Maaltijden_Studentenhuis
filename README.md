@@ -20,6 +20,6 @@
 
 - **Express:** HTTP Web Framework
 - **Morgan:** HTTP Request Logger
-- **Multer:** ?
+- **Multer:** Multipart/formdata parser
 - **Mysql:** Database connection
 - **Nodemon:** Auto reload server after file changes
