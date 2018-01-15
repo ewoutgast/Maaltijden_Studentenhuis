@@ -19,6 +19,7 @@ module.exports = {
                         message: 'User already joined'
                     }
                 }).end();
+                return false;
             };
             
             checkMaxAmount(body.meal_id, body.guest_amount, (lessThanMax) => {
@@ -28,11 +29,12 @@ module.exports = {
                             message: 'Max amount guests'
                         }
                     }).end();
+                    return false;
                 }else{
                     // Join meal
-                    var query = 'INSERT INTO meals_users (meal_id, user_id, guest_amount) VALUES (' + body.meal_id + ',' + body.user_id + ',' + body.guest_amount + ')';
+                    var query = 'INSERT INTO meals_users SET ?';
 
-                    connection.query(query, function (error, rows, fields) {
+                    connection.query(query, {meal_id: body.meal_id, user_id: body.user_id, guest_amount: body.guest_amount}, function (error, rows, fields) {
                         if (error) {
                             next(error);
                         } else {
@@ -42,6 +44,7 @@ module.exports = {
                                 },
                                 result: rows
                             }).end();
+                            return false;
                         };
                     });
                 }
@@ -51,15 +54,16 @@ module.exports = {
                 status: {
                     message: 'ERROR'
                 }
-            }).end();   
+            }).end();  
+            return false; 
         };
     }
 };
 
 function checkUserAlreadyJoined(meal_id, user_id) {
-    var query = 'SELECT id FROM meals_users WHERE meal_id = ' + meal_id + ' AND user_id = ' + user_id + ' LIMIT 1';
+    var query = 'SELECT id FROM meals_users WHERE meal_id = ? AND user_id = ? LIMIT 1';
 
-    return connection.query(query, function (error, rows, fields) {
+    return connection.query(query, [meal_id, user_id], function (error, rows, fields) {
         if (error) {
             console.log(error);
             return false;
@@ -72,9 +76,9 @@ function checkUserAlreadyJoined(meal_id, user_id) {
 }
 
 function checkMaxAmount(meal_id, guest_amount, callback) {
-    var query = 'SELECT guest_amount FROM meals_users WHERE meal_id = ' + meal_id;
+    var query = 'SELECT guest_amount FROM meals_users WHERE meal_id = ?';
 
-    connection.query(query, function (error, rows, fields) {
+    connection.query(query, meal_id, function (error, rows, fields) {
         if (error) {
             console.log(error);
             return false;
@@ -103,9 +107,9 @@ function checkMaxAmount(meal_id, guest_amount, callback) {
 function getMeal(meal_id) {
     return new Promise(
         function(resolve, reject){
-            var query = 'SELECT id, title, description, datetime, image, max_amount, user_id FROM meals WHERE id = ' + meal_id + ' LIMIT 1';
+            var query = 'SELECT id, title, description, datetime, image, max_amount, user_id FROM meals WHERE id = ? LIMIT 1';
     
-            connection.query(query, function (error, rows, fields) {
+            connection.query(query, meal_id, function (error, rows, fields) {
                 if (error) {
                     console.log(error);
                     reject(error);
