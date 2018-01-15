@@ -179,7 +179,7 @@ function checkPassword(password, res){
 function checkSecret_key(secret_key, res){
     return new Promise(
         function (resolve, reject){
-            if(secret_key =='12345'){
+            if(secret_key == config.reg_key){
                 resolve();
             }
             else{
@@ -201,3 +201,5 @@ function checkEmail(email, res){
         }
     );
 }
+
+
