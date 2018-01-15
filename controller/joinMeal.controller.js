@@ -12,25 +12,26 @@ module.exports = {
             //Add yourself as guest
             body.guest_amount++;
             
-            // Check user already joined
-            if (!checkUserAlreadyJoined(body.meal_id, body.user_id)) {
-                res.status(400).json({
-                    status: {
-                        message: 'User already joined'
-                    }
-                }).end();
-                return false;
-            };
+            var userAlreadyJoined = checkUserAlreadyJoined(body.meal_id, body.user_id);
+            var maxAmount = checkMaxAmount(body.meal_id, body.guest_amount);
             
-            checkMaxAmount(body.meal_id, body.guest_amount, (lessThanMax) => {
-                if(!lessThanMax){
+            Promise.all([userAlreadyJoined.ready(), maxAmount.ready()]).then(function() {
+                // Check user already joined
+                if (userAlreadyJoined) {
+                    res.status(400).json({
+                        status: {
+                            message: 'User already joined'
+                        }
+                    }).end();
+                    return false;
+                } else if (!maxAmount) {
                     res.status(400).json({
                         status: {
                             message: 'Max amount guests'
                         }
                     }).end();
                     return false;
-                }else{
+                } else {
                     // Join meal
                     var query = 'INSERT INTO meals_users SET ?';
 
@@ -48,6 +49,14 @@ module.exports = {
                         };
                     });
                 }
+            }, function() {
+              // one or more failed
+              res.status(500).json({
+                  status: {
+                      message: 'ERROR?????????'
+                  }
+              }).end();  
+              return false; 
             });
         } else {
             res.status(500).json({
@@ -61,63 +70,64 @@ module.exports = {
 };
 
 function checkUserAlreadyJoined(meal_id, user_id) {
-    var query = 'SELECT id FROM meals_users WHERE meal_id = ? AND user_id = ? LIMIT 1';
-
-    return connection.query(query, [meal_id, user_id], function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-            return false;
-        } else if (rows.length != 1) {
-            return false;
-        } else {
-            return true;
-        }
-    });
+    return true;
+    // var query = 'SELECT id FROM meals_users WHERE meal_id = ? AND user_id = ? LIMIT 1';
+    // 
+    // return connection.query(query, [meal_id, user_id], function (error, rows, fields) {
+    //     if (error) {
+    //         console.log(error);
+    //         return false;
+    //     } else if (rows.length != 1) {
+    //         return false;
+    //     } else {
+    //         return true;
+    //     }
+    // });
 }
 
 function checkMaxAmount(meal_id, guest_amount, callback) {
-    var query = 'SELECT guest_amount FROM meals_users WHERE meal_id = ?';
-
-    connection.query(query, meal_id, function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-            return false;
-        } else {
-            // Count all signup guests
-            var total_amount = 0;
-
-            rows.forEach(function(row) {
-                total_amount += row.guest_amount;
-            });
-            
-            getMeal(meal_id).then((meal) => {
-                if (meal.max_amount >= (total_amount + guest_amount)) {
-                    callback(true);
-                } else {
-                    callback(false);
-                };
-            }).catch((error) => {
-                console.log(error);
-                callback(false);
-            });
-        }
-    });
+    return false;
+    // var query = 'SELECT guest_amount FROM meals_users WHERE meal_id = ?';
+    // 
+    // connection.query(query, meal_id, function (error, rows, fields) {
+    //     if (error) {
+    //         console.log(error);
+    //         return false;
+    //     } else {
+    //         // Count all signup guests
+    //         var total_amount = 0;
+    // 
+    //         rows.forEach(function(row) {
+    //             total_amount += row.guest_amount;
+    //         });
+    // 
+    //         getMeal(meal_id).then((meal) => {
+    //             if (meal.max_amount >= (total_amount + guest_amount)) {
+    //                 callback(true);
+    //             } else {
+    //                 callback(false);
+    //             };
+    //         }).catch((error) => {
+    //             console.log(error);
+    //             callback(false);
+    //         });
+    //     }
+    // });
 }
 
 function getMeal(meal_id) {
-    return new Promise(
-        function(resolve, reject){
-            var query = 'SELECT id, title, description, datetime, image, max_amount, user_id FROM meals WHERE id = ? LIMIT 1';
-    
-            connection.query(query, meal_id, function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                    reject(error);
-                } else {
-                    resolve(rows[0]);
-                }
-            });
-        }
-    )
-    
+//     return new Promise(
+//         function(resolve, reject){
+//             var query = 'SELECT id, title, description, datetime, image, max_amount, user_id FROM meals WHERE id = ? LIMIT 1';
+// 
+//             connection.query(query, meal_id, function (error, rows, fields) {
+//                 if (error) {
+//                     console.log(error);
+//                     reject(error);
+//                 } else {
+//                     resolve(rows[0]);
+//                 };
+//             });
+//         }
+//     );
 }
