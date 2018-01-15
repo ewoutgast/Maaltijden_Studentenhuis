@@ -20,7 +20,7 @@ routes.use('*', function (req, res, next) {
 routes.get('/meals', meal.getAll);
 routes.get('/meal/:id', meal.getById);
 
-routes.post('/meal/join/:id', joinMeal.joinMealById);
+routes.post('/join', joinMeal.joinMealById);
 
 routes.post('/new_meal', upload.single('newMealImg'), newMeal.newMeal);
 
