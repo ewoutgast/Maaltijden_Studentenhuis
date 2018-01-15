@@ -1,8 +1,15 @@
 // Dependencies
 var mysql = require('mysql');
+var config = require('../config/general');
 
 // Config files
-var db = require('./db');
+var db = {
+    "port": config.dbPort,
+    "host": config.host,
+    "user": config.user,
+    "password": config.password,
+    "database": config.database
+};
 
 // TUTORIAL: http://sudoall.com/node-js-handling-mysql-disconnects/
 var connection;
