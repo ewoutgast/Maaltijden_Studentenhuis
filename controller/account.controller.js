@@ -167,7 +167,7 @@ function checkName(name, res){
 function checkPassword(password, res){
     return new Promise(
         function (resolve, reject){
-            if((password.length >= 6 && /\d/.test(password) && /\W/.test(password))){
+            if((password.length >= 6 && /\d/.test(password) && /\W{2,}/.test(password))){
                 resolve();
             }
             else{
