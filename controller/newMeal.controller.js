@@ -84,7 +84,7 @@ function handleNewMealImg(newMealImg, newMealReq, res, mealId){
         
         var targetPath = path.resolve('./uploads/meal_img/' + imgName);
 
-        insertImgDb(tempPath, targetPath, imgName, mealId, res);;
+        insertImgDb(tempPath, targetPath, imgName, mealId, res);
     }
 }
 
