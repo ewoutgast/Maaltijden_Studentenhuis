@@ -1,7 +1,3 @@
 node_modules
 package-lock.json
-config/db.json
 npm-debug.log
-config/db.json
-config/connection.js
-config/general.json

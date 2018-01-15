@@ -29,8 +29,9 @@ app.use(logger('dev'));
 
 
 app.get('/', function(req, res) {
-    res.status(200);
-    res.send('Usages: api/v1/[url]');
+		res.status(200);
+    	res.send('Usages: api/v1/[url]');
+	
 });
 app.use('/api/v1', routes_v1);
 app.use('*', function (req, res) {
@@ -47,22 +48,4 @@ app.listen(process.env.PORT || config.port, function() {
 module.exports = app;
 
 
-function decodeToken(token, cb){
-	try{
-		const payload = jwt.decode(token, settings.secret_key);
-		const now = moment().unix();
 
-		if(now > payload.exp){
-			console.log('Token has expired');
-		}
-		else{
-
-		}
-	}
-	catch(err){
-
-	}
-}
-function toLogin(){
-	res.redirect('/?valid=' + string);
-}
