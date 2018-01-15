@@ -1,10 +1,4 @@
 {
     "port": "4015",
-    "secret_key": "Ik hou van pindakaas",
-    "dbPort": "3307",
-    "host": "86.84.123.57",
-    "user": "studentenhuis",
-    "password": "W4s4Mq49De4HBvUU",
-    "database": "maaltijden_studentenhuis",
     "reg_key": "@Welkom1"
 }

@@ -2,10 +2,10 @@
   "name": "maaltijden_studentenhuis",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/_mocha ./test/*test.js --reporter spec --exit",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test": "node_modules/mocha/bin/_mocha ./test/*test.js --reporter spec --exit"
   },
   "author": "Bart den Hoed",
   "license": "ISC",

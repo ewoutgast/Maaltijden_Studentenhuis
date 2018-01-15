@@ -9,29 +9,34 @@ var meal = require('../controller/meal.controller');
 var newMeal = require('../controller/newMeal.controller');
 var account = require('../controller/account.controller');
 
-routes.all(new RegExp("[^(\/login|/register)]"),function(req,res,next){
-	var token = (req.header("X-Acces-Token"))||'';
+module.exports = {}
+
+// Decode token
+routes.all(new RegExp("[^(\/login|/register)]"), function(req, res, next) {
+	var token = (req.header("X-Acces-Token")) || '';
 	decodeToken(token, res, function(){
 		next();
 	});
 });
-// routes
+
+// All routes
 routes.use('*', function (req, res, next) {
-	res.contentType('application/json'); // Add content type
-	next();
-	
+    res.contentType('application/json'); // Add content type
+    next();
 });
 
 routes.get('/meals', meal.getAll);
 routes.get('/meal/:id', meal.getById);
-routes.post('/new_meal', upload.single('newMealImg'), newMeal.newMeal);
+
+routes.post('/meal/new', upload.single('newMealImg'), newMeal.newMeal);
+
 routes.post('/register', account.register);
 routes.post('/login',account.login);
 
 module.exports = routes;
 
-function decodeToken(token, res, cb){
-	try{
+function decodeToken(token, res, cb) {
+	try {
 		const payload = jwt.decode(token, settings.secret_key);
 		const now = moment().unix();
 
