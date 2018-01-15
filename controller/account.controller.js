@@ -135,7 +135,13 @@ function validation(email, name, password, secret_key, res, cb){
         var emailCheck = checkEmail(email, res);
         Promise.all([nameCheck,passwordCheck,secret_keyCheck,emailCheck]).then(function(){
             cb();
-        })
+        }).catch(function(error){
+            res.status(400).json({
+                status:{
+                    message: error
+                }
+            }).end();
+         });
     }
     else{
         res.status(400).json({
@@ -150,11 +156,7 @@ function checkName(name, res){
     return new Promise(
         function (resolve, reject){
             if(name.lenght < 3){
-                res.status(400).json({
-                    status:{
-                        message: 'Naam ongeldig'
-                    }
-                }).end();
+                reject('Naam ongeldig');
             }
             else{
                 resolve();
@@ -169,11 +171,7 @@ function checkPassword(password, res){
                 resolve();
             }
             else{
-                res.status(400).json({
-                    status:{
-                        message: 'Gebruik een sterk wachtwoord.'
-                    }
-                }).end();
+                reject('Gebruik een sterk wachtwoord.');
             }
         }
     );
@@ -185,11 +183,7 @@ function checkSecret_key(secret_key, res){
                 resolve();
             }
             else{
-                res.status(400).json({
-                    status:{
-                        message: 'Geheime sleutel ongeldig'
-                    }
-                }).end();
+                reject('Geheime sleutel ongeldig');
             }
         }
     );
@@ -202,11 +196,7 @@ function checkEmail(email, res){
                 resolve();
             }
             else{
-                res.status(400).json({
-                    status:{
-                        message: 'Emailadres ongeldig'
-                    }
-                }).end();
+                reject('Emailadres ongeldig');
             }
         }
     );
