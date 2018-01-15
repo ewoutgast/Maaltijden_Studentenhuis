@@ -15,119 +15,108 @@ module.exports = {
             var userAlreadyJoined = checkUserAlreadyJoined(body.meal_id, body.user_id);
             var maxAmount = checkMaxAmount(body.meal_id, body.guest_amount);
             
-            Promise.all([userAlreadyJoined.ready(), maxAmount.ready()]).then(function() {
-                // Check user already joined
-                if (userAlreadyJoined) {
-                    res.status(400).json({
-                        status: {
-                            message: 'User already joined'
-                        }
-                    }).end();
-                    return false;
-                } else if (!maxAmount) {
-                    res.status(400).json({
-                        status: {
-                            message: 'Max amount guests'
-                        }
-                    }).end();
-                    return false;
-                } else {
-                    // Join meal
-                    var query = 'INSERT INTO meals_users SET ?';
-
-                    connection.query(query, {meal_id: body.meal_id, user_id: body.user_id, guest_amount: body.guest_amount}, function (error, rows, fields) {
-                        if (error) {
-                            next(error);
-                        } else {
-                            res.status(200).json({
-                                status: {
-                                    message: 'OK'
-                                },
-                                result: rows
-                            }).end();
-                            return false;
-                        };
-                    });
-                }
-            }, function() {
-              // one or more failed
-              res.status(500).json({
-                  status: {
-                      message: 'ERROR?????????'
-                  }
-              }).end();  
-              return false; 
+            Promise.all([userAlreadyJoined, maxAmount]).then(() => {
+                // Join meal
+                var query = 'INSERT INTO meals_users SET ?';
+                
+                connection.query(query, {meal_id: body.meal_id, user_id: body.user_id, guest_amount: body.guest_amount}, function (error, rows, fields) {
+                    if (error) {
+                        next(error);
+                    } else {
+                        res.status(200).json({
+                            status: {
+                                message: 'OK'
+                            }
+                        }).end();
+                        return false;
+                    };
+                });
+            }).catch((error) => {
+                res.status(400).json({
+                    status: {
+                        message: error.reason || 'Check server log'
+                    }
+                }).end();
             });
-        } else {
-            res.status(500).json({
-                status: {
-                    message: 'ERROR'
-                }
-            }).end();  
-            return false; 
         };
     }
 };
 
 function checkUserAlreadyJoined(meal_id, user_id) {
-    return true;
-    // var query = 'SELECT id FROM meals_users WHERE meal_id = ? AND user_id = ? LIMIT 1';
-    // 
-    // return connection.query(query, [meal_id, user_id], function (error, rows, fields) {
-    //     if (error) {
-    //         console.log(error);
-    //         return false;
-    //     } else if (rows.length != 1) {
-    //         return false;
-    //     } else {
-    //         return true;
-    //     }
-    // });
+    return new Promise(
+        function (resolve, reject){
+            var query = 'SELECT id FROM meals_users WHERE meal_id = ? AND user_id = ? LIMIT 1';
+            
+            connection.query(query, [meal_id, user_id], function (error, rows, fields) {
+                if (error) {
+                    console.log(error);
+                    reject(error);
+                } else if (rows.length == 1) {
+                    reject({
+                        code: 1,
+                        reason: 'user already joined',
+                        mealId: meal_id,
+                        userId: user_id
+                    });
+                } else {
+                    resolve();
+                }
+            });
+        }
+    );
 }
 
 function checkMaxAmount(meal_id, guest_amount, callback) {
-    return false;
-    // var query = 'SELECT guest_amount FROM meals_users WHERE meal_id = ?';
-    // 
-    // connection.query(query, meal_id, function (error, rows, fields) {
-    //     if (error) {
-    //         console.log(error);
-    //         return false;
-    //     } else {
-    //         // Count all signup guests
-    //         var total_amount = 0;
-    // 
-    //         rows.forEach(function(row) {
-    //             total_amount += row.guest_amount;
-    //         });
-    // 
-    //         getMeal(meal_id).then((meal) => {
-    //             if (meal.max_amount >= (total_amount + guest_amount)) {
-    //                 callback(true);
-    //             } else {
-    //                 callback(false);
-    //             };
-    //         }).catch((error) => {
-    //             console.log(error);
-    //             callback(false);
-    //         });
-    //     }
-    // });
+    return new Promise(
+        function (resolve, reject){
+            var query = 'SELECT guest_amount FROM meals_users WHERE meal_id = ?';
+            
+            connection.query(query, meal_id, function (error, rows, fields) {
+                if (error) {
+                    console.log(error);
+                    return false;
+                } else {
+                    // Count all signup guests
+                    var total_amount = 0;
+            
+                    rows.forEach(function(row) {
+                        total_amount += row.guest_amount;
+                    });
+            
+                    getMeal(meal_id).then((meal) => {
+                        if (meal.max_amount >= (total_amount + guest_amount)) {
+                            resolve();
+                        } else {
+                            reject({
+                                code: 2,
+                                reason: 'Guest amount to high',
+                                max_amount: meal.max_amount,
+                                oldTotal: total_amount,
+                                newGuests: guest_amount
+                            });
+                        };
+                    }).catch((error) => {
+                        reject(error)
+                    });
+                }
+            });
+        }
+    );
 }
 
 function getMeal(meal_id) {
-//     return new Promise(
-//         function(resolve, reject){
-//             var query = 'SELECT id, title, description, datetime, image, max_amount, user_id FROM meals WHERE id = ? LIMIT 1';
-// 
-//             connection.query(query, meal_id, function (error, rows, fields) {
-//                 if (error) {
-//                     console.log(error);
-//                     reject(error);
-//                 } else {
-//                     resolve(rows[0]);
-//                 };
-//             });
-//         }
-//     );
+    return new Promise(
+        function(resolve, reject){
+            var query = 'SELECT id, title, description, datetime, image, max_amount, user_id FROM meals WHERE id = ? LIMIT 1';
+
+            connection.query(query, meal_id, function (error, rows, fields) {
+                if (error) {
+                    console.log(error);
+                    reject(error);
+                } else {
+                    resolve(rows[0]);
+                };
+            });
+        }
+    );
 }
