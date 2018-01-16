@@ -1,7 +1,9 @@
 // Dependencies
 var express = require('express');
 var routes = express.Router();
-
+var jwt = require('jwt-simple');
+var settings = require('../config/general');
+var moment = require('moment');
 // Controllers
 var meal = require('../controller/meal.controller');
 var account = require('../controller/account.controller');
@@ -46,6 +48,7 @@ function decodeToken(token, res, cb){
 		}
 	}
 	catch(err){
+		console.log(err);
 		res.status(400).json({
                 status:{
                    message: 'Niet ingelogd'

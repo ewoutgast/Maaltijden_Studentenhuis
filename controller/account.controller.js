@@ -33,7 +33,8 @@ module.exports = {
     //validate login + web token creation
     login(req, res) {
         var password = req.body.password;
-        getUser(req.body.email,res, function(user){
+        console.log(req.body.email);
+        getUser(req.body.email ||'',res, function(user){
             if(user.length != 0 ){
                 bcrypt.compare(password, user[0].password, function(err, check) {
                     if(check){
