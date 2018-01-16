@@ -32,7 +32,10 @@ module.exports = {
                     };
                 });
             }).catch((error) => {
-                res.status(400).json({
+                if(error.reason === undefined){
+                    console.log(error);
+                }
+                res.status(error.statusCode || 400).json({
                     status: {
                         message: error.reason || 'Check server log'
                     }
@@ -113,6 +116,13 @@ function getMeal(meal_id) {
                 if (error) {
                     console.log(error);
                     reject(error);
+                } else if(rows.length < 1){
+                    reject({
+                        code: 3,
+                        statusCode: 404,
+                        reason: 'Meal not found',
+                        mealId: meal_id
+                    })
                 } else {
                     resolve(rows[0]);
                 };
