@@ -1,3 +1,4 @@
+var fs = require('fs');
 var connection = require('../config/connection');
 
 module.exports = {
@@ -39,5 +40,23 @@ module.exports = {
                 return true;
             };
         });
+    },
+
+    getImage(req, res, next){
+        var imgReq = req.params.imgName;
+        try{
+            var img = fs.readFileSync('./uploads/meal_img/' + imgReq);
+        
+            var imgExt = imgReq.split('.').pop();
+    
+            res.contentType('image/' + imgExt);
+            res.status(200).end(img, 'binary');
+        }catch(ex){
+            res.status(404).json({
+                status: {
+                    message: 'Image not found'
+                }
+            }).end();
+        }
     }
 };

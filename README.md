@@ -7,9 +7,10 @@
 
 - **new_meal:** `[api/v1/meal]` (POST: user, datetime, title, desc, max_people, image) 
 - **get_meal:** `[api/v1/meal/:id]` (GET: title, desc, joined_people[], max people) 
-- **all_meals:** `[api/v1/meals]` (GET: title + number of people, max people)
+- **get_img:** `[api/v1/meal/img/:imgName]` (GET: image)
 - **join_meal:** `[api/v1/meal/join]` (POST: meal_id, user, amount of people)
 - **leave_meal:** `[api/v1/meal/leave]` (POST: meal_id, user)
+- **all_meals:** `[api/v1/meals]` (GET: title + number of people, max people)
 
 ## Install
 - Run `npm install`
