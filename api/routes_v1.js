@@ -3,6 +3,11 @@ var express = require('express');
 var routes = express.Router();
 var multer = require('multer');
 var upload = multer({ dest: 'uploads/' });
+var jwt = require('jwt-simple');
+var moment = require('moment');
+
+//Config
+var settings = require('../config/general');
 
 // Controllers
 var meal = require('../controller/meal.controller');
@@ -37,6 +42,7 @@ module.exports = routes;
 
 function decodeToken(token, res, cb) {
 	try {
+		console.log(settings.secret_key);
 		const payload = jwt.decode(token, settings.secret_key);
 		const now = moment().unix();
 
