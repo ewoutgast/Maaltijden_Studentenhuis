@@ -1,4 +1,5 @@
 {
     "port": "4015",
-    "reg_key": "@Welkom1"
+    "reg_key": "@Welkom1",
+    "secret_key": "Ik hou van pindakaas"
 }
