@@ -22,7 +22,8 @@ module.exports = {
     
     getById(req, res, next) {
         var id = req.params.id;
-        var query = 'SELECT id, title, description, datetime, image, max_amount, user_id FROM meals WHERE id = ' + id;
+      
+        var query = 'SELECT * FROM meals WHERE id=' + id;
         
         connection.query(query, function (error, rows, fields) {
             if (error) {

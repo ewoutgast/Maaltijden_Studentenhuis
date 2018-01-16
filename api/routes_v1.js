@@ -12,6 +12,7 @@ var settings = require('../config/general');
 // Controllers
 var meal = require('../controller/meal.controller');
 var newMeal = require('../controller/newMeal.controller');
+var joinMeal = require('../controller/joinMeal.controller');
 var account = require('../controller/account.controller');
 
 module.exports = {}
@@ -33,6 +34,7 @@ routes.use('*', function (req, res, next) {
 routes.get('/meals', meal.getAll);
 routes.get('/meal/:id', meal.getById);
 
+routes.post('/meal/join', joinMeal.joinMealById);
 routes.post('/meal/new', upload.single('newMealImg'), newMeal.newMeal);
 
 routes.post('/register', account.register);
