@@ -18,7 +18,7 @@ module.exports = {}
 
 // Decode token
 routes.all(new RegExp("[^(\/login|/register)]"), function(req, res, next) {
-	var token = (req.header("X-Acces-Token")) || '';
+	var token = (req.header("X-Access-Token")) || '';
 	decodeToken(token, res, function(){
 		next();
 	});
