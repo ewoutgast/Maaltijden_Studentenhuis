@@ -1,25 +1,44 @@
 # Maaltijden Studentenhuis
-## Endnodes
+## Endpoints
 
-- **register:** `[api/v1/register]` (POST: name, email(6 karakters, 2 speciale tekens, 1 digit), password, secret_key)
-- **login:** `[api/v1/login]` (POST: email, password)
+- **Register:** `POST [URL/register]`
+    - Body: name, email, password (6 karakters & 2 speciale tekens & 1 digit), secret_key
+- **Login:** `POST [URL/login]` 
+    - Body: email, password
+    - Return: token
 
+For all endpoints below you must use this token in the header (`X-Access-Token`):
 
-- **new_meal:** `[api/v1/meal]` (POST: user, datetime, title, desc, max_people, image) 
-- **get_meal:** `[api/v1/meal/:id]` (GET: title, desc, joined_people[], max people) 
-- **all_meals:** `[api/v1/meals]` (GET: title + number of people, max people)
-- **join_meal:** `[api/v1/meal/join]` (POST: meal_id, user, amount of people)
-- **leave_meal:** `[api/v1/meal/leave]` (POST: meal_id, user)
+- **New meal:** `POST [URL/meal]`
+    - Body: user, datetime (Y-m-d H:i:s), title, desc, max_people, image
+- **Get all meals:** `GET [URL/meals]`
+    - Return: title, amount (joined people), max_amount
+- **Get meal:** `GET [URL/meal/:id]`
+    - Return: title, desc, joined_people[name, guest], max_amount
+- **Join meal:** `POST [URL/meal/join]` 
+    - Body: meal_id, user_id, guest_amount
+- **Leave meal:** `POST [URL/meal/leave]`
+    - Body: meal_id, user_id
+- **Get image:** `POST [URL/?]`
+    - Return: ?
 
-## Install
+## Installation
+
 - Run `npm install`
 - Copy `config/db.example.json` to `config/db.json` and change values
 - Run `npm start`
 
 ## Packages
 
+- **Nodemon:** Auto reload server after file changes
 - **Express:** HTTP Web Framework
 - **Morgan:** HTTP Request Logger
-- **Multer:** Multipart/formdata parser
 - **Mysql:** Database connection
-- **Nodemon:** Auto reload server after file changes
+- **Mocha:** Test framework
+- **Chai:** Test framework extension
+- **Chai-HTTP:** Test framework extension
+- **JWT-Simple:** JSON Web Token encoder/decoder
+- **Multer:** Multipart/form-data parser (uploading files)
+- **Moment:** Parsing, validating, manipulating and formatting dates
+- **Body-Parser:** Parsing off the HTTP body
+- **Bcrypt:** Password encryption

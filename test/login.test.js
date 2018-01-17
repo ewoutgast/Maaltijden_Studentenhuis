@@ -1,11 +1,16 @@
+// Packages
 var chai = require('chai');
 var chaiHttp = require('chai-http');
+
+// Files
 var server = require('../server.js');
-var chould = chai.should();
-var db = require('../config/connection');
+var db = require('../config/connection.js');
 var config = require('../config/general.json');
 
-var expect = chai.expect;
+// Set chai functions
+const assert = chai.assert;    // Using Assert style
+const expect = chai.expect;    // Using Expect style
+const should = chai.should();  // Using Should style
 
 chai.use(chaiHttp);
 
