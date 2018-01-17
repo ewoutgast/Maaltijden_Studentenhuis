@@ -23,3 +23,8 @@
 - **Multer:** Multipart/formdata parser
 - **Mysql:** Database connection
 - **Nodemon:** Auto reload server after file changes
+- **Bcrypt:** Password encryption
+- **jwt-simple:** Webtoken
+- **mocha:** Testing
+- **Moment:** Time for webtoken
+
