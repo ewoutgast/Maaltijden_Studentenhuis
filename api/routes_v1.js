@@ -35,11 +35,9 @@ routes.use('*', function (req, res, next) {
 routes.get('/meals', meal.getAll);
 routes.get('/meal/:id', meal.getById);
 
-<<<<<<< HEAD
 routes.post('/meal/leave', leaveMeal.leaveMealById);
 
 routes.post('/new_meal', upload.single('newMealImg'), newMeal.newMeal);
-=======
 routes.post('/meal/join', joinMeal.joinMealById);
 routes.post('/meal/new', upload.single('newMealImg'), newMeal.newMeal);
 
@@ -53,7 +51,6 @@ function decodeToken(token, res, cb) {
 		console.log(settings.secret_key);
 		const payload = jwt.decode(token, settings.secret_key);
 		const now = moment().unix();
->>>>>>> origin/develop
 
 		if(now > payload.exp){
 			console.log('Token has expired');
