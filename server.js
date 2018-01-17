@@ -23,9 +23,15 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(logger('dev'));
 
 // Routes
+
+//token check
+
+
+
 app.get('/', function(req, res) {
-    res.status(200);
-    res.send('Usages: api/v1/[url]');
+		res.status(200);
+    	res.send('Usages: api/v1/[url]');
+	
 });
 app.use('/api/v1', routes_v1);
 app.use('*', function (req, res) {
@@ -36,7 +42,10 @@ app.use('*', function (req, res) {
 
 // Listing to port
 app.listen(process.env.PORT || config.port, function() {
-	console.log('Example app listening on port ' + config.port + '!')
+	console.log('App listening on port ' + config.port + '!')
 });
 
 module.exports = app;
+
+
+
