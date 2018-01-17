@@ -15,7 +15,7 @@ const should = chai.should();  // Using Should style
 chai.use(chaiHttp);
 
 describe('getMeal API interface', function() {
-    describe('Correctly test', function() {
+    describe('Correctly tests', function() {
         before(function(){
             // Create 1 meal
             var query = 'INSERT INTO meals SET (title, description, datetime, max_amount, user_id) VALUES ("Meal titel", "Meal description", "1111-11-11", "5", "1")';
