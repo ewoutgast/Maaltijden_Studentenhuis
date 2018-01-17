@@ -6,7 +6,7 @@ var upload = multer({ dest: 'uploads/' });
 var jwt = require('jwt-simple');
 var moment = require('moment');
 
-//Config
+// Config
 var settings = require('../config/general');
 
 // Controllers
