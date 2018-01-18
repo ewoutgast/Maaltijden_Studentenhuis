@@ -27,7 +27,7 @@ let login_details = {
     password: '56789kjhgFGH.,'
 }
 
-var imgFileName = '2018-01-20T1700_3_pizza.png'; // Change this to the correct imgName if you change the datetime, user or title from the requests (or image-extension)
+var imgFileNameYear = '2030'; // Change this to the year of the datetime-field
 
 var token;
 
@@ -50,12 +50,21 @@ describe('newMeal API interface',function(){
     afterEach((done) => {
         db.query('DELETE FROM `users` WHERE `email` = ?', register_details.email, function(error){
             if(error) console.log(error);
-            fs.unlinkSync('./uploads/meal_img/' + imgFileName);
             db.query('DELETE FROM `meals` WHERE user_id = ?', 3 /* Should be user_id from login response! */, function (error) {
                 if(error) console.log(error);
                 done();
             });
         });
+    });
+
+    after((done) => {
+        fs.readdirSync('./uploads/meal_img/')
+        .forEach((img) => {
+            if(img.startsWith(imgFileNameYear)){
+                fs.unlinkSync('./uploads/meal_img/' + img);
+            }
+        })
+        done();
     });
 
     describe('POST /api/v1/meal/new',function(){    
@@ -67,7 +76,7 @@ describe('newMeal API interface',function(){
             .set('Content-Type', 'multipart/form-data')
             .attach('newMealImg', fs.readFileSync("./test/newMealTestImg/test1.png"), "test1.png")
             .field('user', 3) // Should be user_id from login response!
-            .field('datetime', '2018-01-20 18:00:00')
+            .field('datetime', '2030-01-20 18:00') //Please make datetime unique (but ALWAYS use imgFileNameYear as year)
             .field('title', 'pizza')
             .field('desc', 'Even wachten... PIZZA!')
             .field('max_people', 10)
@@ -86,7 +95,7 @@ describe('newMeal API interface',function(){
             .set('Content-Type', 'multipart/form-data')
             .attach('newMealImg', fs.readFileSync("./test/newMealTestImg/test1.png"), "test1.png")
             .field('user', 99999) // Should be user_id from login response!
-            .field('datetime', '2018-01-20 18:00:00')
+            .field('datetime', '2030-01-20 20:00') //Please make datetime unique (but ALWAYS use imgFileNameYear as year)
             .field('title', 'pizza')
             .field('desc', 'Even wachten... PIZZA!')
             .field('max_people', 10)

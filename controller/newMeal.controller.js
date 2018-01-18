@@ -7,6 +7,7 @@ module.exports = {
         var newMealReq = req.body;
 
         if(newMealReq.user == undefined){
+            if(req.file != undefined) fs.unlink(req.file.path);
             res.status(400).json({
                 status: {
                     query: 'Bad Request: User has to be defined'
@@ -18,8 +19,10 @@ module.exports = {
 
         connection.query(query, function (error, rows, fields) {
             if(error){
+                if(req.file != undefined) fs.unlink(req.file.path);
                 next(error);
             } else if(rows.length != 1) {
+                if(req.file != undefined) fs.unlink(req.file.path);
                 res.status(400).json({
                     status: {
                         query: 'Bad Request: User does not exist'
@@ -27,10 +30,15 @@ module.exports = {
                 }).end();
             }else{
                 if(!checkNewMealReq(newMealReq)){
-                    return false;
+                    if(req.file != undefined) fs.unlink(req.file.path);
+                    res.status(400).json({
+                        status: {
+                            query: 'Bad Request'
+                        }
+                    }).end();
+                }else{
+                    insertNewMeal(req.file, newMealReq, res);
                 }
-
-                insertNewMeal(req.file, newMealReq, res);              
             }
         });
     }
@@ -52,6 +60,7 @@ function insertNewMeal(newMealImg, newMealReq, res){
     connection.query('INSERT INTO meals SET ?', {title: newMealReq.title, description: newMealReq.desc, datetime: newMealReq.datetime, max_amount: newMealReq.max_people, user_id: newMealReq.user}, function (error, results, fields) {
         if(error){
             console.log(error);
+            if(newMealImg != undefined) fs.unlink(newMealImg.path);
             res.status(500).json({
                 status: {
                     query: 'Internal Server Error: Could not insert meal'
@@ -59,7 +68,7 @@ function insertNewMeal(newMealImg, newMealReq, res){
             }).end();
         } else if(results.affectedRows < 1) {
             console.log('Affected rows less than 1.');
-
+            if(newMealImg != undefined) fs.unlink(newMealImg.path);
             res.status(500).json({
                 status: {
                     query: 'Internal Server Error: Could not insert meal'
@@ -96,6 +105,7 @@ function handleNewMealImg(newMealImg, newMealReq, res, mealId){
 //Inserts imagename into DB and puts the image in the right folder
 function insertImgDb(tempPath, targetPath, imgName, mealId, res){
     fs.rename(tempPath, targetPath, function(error){
+        console.log('temp: ' + tempPath + ' - target: ' + targetPath);
         if(error) {
             console.log(error);
             res.status(500).json({
