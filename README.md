@@ -15,6 +15,7 @@
 ## Install
 - Run `npm install`
 - Copy `config/db.example.json` to `config/db.json` and change values
+- Make folder `uploads/meal_img` in rootdir
 - Run `npm start`
 
 ## Packages

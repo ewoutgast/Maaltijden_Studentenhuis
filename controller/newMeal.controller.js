@@ -93,30 +93,11 @@ function insertImgDb(tempPath, targetPath, imgName, mealId, res){
     fs.rename(tempPath, targetPath, function(error){
         if(error) {
             console.log(error);
-            connection.query('UPDATE meals SET image = ? WHERE id = ?', ['undefined.png', mealId], function (error, results, fields) {
-                if(error){
-                    console.log(error);
-                    res.status(500).json({
-                        status: {
-                            query: 'Internal Server Error: Could not insert image. Meal created with NULL image.'
-                        }
-                    }).end();
-                } else if(results.affectedRows < 1) {
-                    console.log('Affected rows less than 1.');
-        
-                    res.status(500).json({
-                        status: {
-                            query: 'Internal Server Error: Could not insert image. Meal created with NULL image.'
-                        }
-                    }).end();
-                }else{            
-                    res.status(500).json({
-                        status: {
-                            query: 'Internal Server Error: Could not insert image. Meal created with unknown image.'
-                        }
-                    }).end();
+            res.status(500).json({
+                status: {
+                    query: 'Internal Server Error: Could not insert image. Meal created with NULL image.'
                 }
-            });
+            }).end();
         }else{
             connection.query('UPDATE meals SET image = ? WHERE id = ?', [imgName, mealId], function (error, results, fields) {
                 if(error){
