@@ -73,18 +73,23 @@ function insertNewMeal(newMealImg, newMealReq, res){
 
 //Checks the image for the new meal and gives it a name
 function handleNewMealImg(newMealImg, newMealReq, res, mealId){
-    var imgName = 'undefined.png';
     if(newMealImg != undefined){
         var tempPath = newMealImg.path;
         var extension = newMealImg.originalname.split('.').pop();
 
         var imgDate = new Date(newMealReq.datetime);
         var imgDateStr = imgDate.toISOString().replace(/(:)|(00.000Z)/g, '');
-        imgName = imgDateStr + '_' + newMealReq.user + '_' + newMealReq.title + '.' + extension;
+        var imgName = imgDateStr + '_' + newMealReq.user + '_' + newMealReq.title + '.' + extension;
         
         var targetPath = path.resolve('./uploads/meal_img/' + imgName);
 
         insertImgDb(tempPath, targetPath, imgName, mealId, res);
+    }else{
+        res.status(400).json({
+            status: {
+                query: 'Bad Request: No image given. Meal created with NULL image.'
+            }
+        }).end();
     }
 }
 
