@@ -19,13 +19,14 @@ For all endpoints below you must use this token in the header (`X-Access-Token`)
     - Body: meal_id, user_id, guest_amount
 - **Leave meal:** `POST [URL/meal/leave]`
     - Body: meal_id, user_id
-- **Get image:** `POST [URL/?]`
-    - Return: ?
+- **Get image:** `GET [api/v1/meal/img/:imgName]`
+    - Return: image
 
 ## Installation
 
 - Run `npm install`
 - Copy `config/db.example.json` to `config/db.json` and change values
+- Make folder `uploads/meal_img` in rootdir
 - Run `npm start`
 
 ## Packages
