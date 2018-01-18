@@ -42,7 +42,7 @@ app.use('*', function (req, res) {
 
 // Listing to port
 app.listen(process.env.PORT || config.port, function() {
-	console.log('Example app listening on port ' + config.port + '!')
+	console.log('App listening on port ' + config.port + '!')
 });
 
 module.exports = app;

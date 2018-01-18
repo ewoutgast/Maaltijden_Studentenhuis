@@ -6,12 +6,13 @@ var upload = multer({ dest: 'uploads/' });
 var jwt = require('jwt-simple');
 var moment = require('moment');
 
-//Config
+// Config
 var settings = require('../config/general');
 
 // Controllers
 var meal = require('../controller/meal.controller');
 var newMeal = require('../controller/newMeal.controller');
+var leaveMeal = require('../controller/leaveMeal.controller');
 var joinMeal = require('../controller/joinMeal.controller');
 var account = require('../controller/account.controller');
 
@@ -33,7 +34,11 @@ routes.use('*', function (req, res, next) {
 
 routes.get('/meals', meal.getAll);
 routes.get('/meal/:id', meal.getById);
+routes.get('/meal/img/:imgName', meal.getImage);
 
+routes.post('/meal/leave', leaveMeal.leaveMealById);
+
+routes.post('/new_meal', upload.single('newMealImg'), newMeal.newMeal);
 routes.post('/meal/join', joinMeal.joinMealById);
 routes.post('/meal/new', upload.single('newMealImg'), newMeal.newMeal);
 
@@ -44,7 +49,6 @@ module.exports = routes;
 
 function decodeToken(token, res, cb) {
 	try {
-		console.log(settings.secret_key);
 		const payload = jwt.decode(token, settings.secret_key);
 		const now = moment().unix();
 
