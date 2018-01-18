@@ -38,7 +38,6 @@ routes.get('/meal/img/:imgName', meal.getImage);
 
 routes.post('/meal/leave', leaveMeal.leaveMealById);
 
-routes.post('/new_meal', upload.single('newMealImg'), newMeal.newMeal);
 routes.post('/meal/join', joinMeal.joinMealById);
 routes.post('/meal/new', upload.single('newMealImg'), newMeal.newMeal);
 
