@@ -21,7 +21,8 @@ module.exports = {}
 // Decode token
 routes.all(new RegExp("[^(\/login|/register)]"), function(req, res, next) {
 	var token = (req.header("X-Access-Token")) || '';
-	decodeToken(token, res, function(){
+	decodeToken(token, res, function(payload){
+		req.user = payload.sub.user;
 		next();
 	});
 });
@@ -61,7 +62,7 @@ function decodeToken(token, res, cb) {
              }).end();
 		}
 		else{
-			cb();
+			cb(payload);
 		}
 	}
 	catch(err){
