@@ -37,11 +37,18 @@ module.exports = {
             if(user.length != 0 ){
                 bcrypt.compare(password, user[0].password, function(err, check) {
                     if(check){
+                        var sub ={
+                            user:{
+                                name: user[0].name,
+                                id: user[0].id,
+                                email: user[0].email
+                            }
+                        }
                         console.log(check);
                         const payload ={
                             exp: moment().add(10,'days').unix(),
                             iat: moment().unix(),
-                            sub: user[0].name
+                            sub: sub
                         };
                         var token = jwt.encode(payload, config.secret_key);
                         res.status(200).json({
