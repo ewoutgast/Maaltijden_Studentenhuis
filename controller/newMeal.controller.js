@@ -5,21 +5,16 @@ var fs = require('fs');
 module.exports = {
     newMeal(req, res, next) {
         var newMealReq = req.body;
+        var user = req.user;
 
-        if(newMealReq.user == undefined){
-            res.status(400).json({
-                status: {
-                    query: 'Bad Request: User has to be defined'
-                }
-            }).end();
-        }
+        var query = 'SELECT * FROM users WHERE id=?';
 
-        var query = 'SELECT * FROM users WHERE id=' + newMealReq.user;
-
-        connection.query(query, function (error, rows, fields) {
+        connection.query(query, user.id, function (error, rows, fields) {
             if(error){
+                if(req.file != undefined) fs.unlink(req.file.path);
                 next(error);
             } else if(rows.length != 1) {
+                if(req.file != undefined) fs.unlink(req.file.path);
                 res.status(400).json({
                     status: {
                         query: 'Bad Request: User does not exist'
@@ -27,10 +22,15 @@ module.exports = {
                 }).end();
             }else{
                 if(!checkNewMealReq(newMealReq)){
-                    return false;
+                    if(req.file != undefined) fs.unlink(req.file.path);
+                    res.status(400).json({
+                        status: {
+                            query: 'Bad Request'
+                        }
+                    }).end();
+                }else{
+                    insertNewMeal(req.file, newMealReq, user.id, res);
                 }
-
-                insertNewMeal(req.file, newMealReq, res);              
             }
         });
     }
@@ -48,10 +48,11 @@ function checkNewMealReq(newMealReq){
 }
 
 //Inserts new meal into DB
-function insertNewMeal(newMealImg, newMealReq, res){
-    connection.query('INSERT INTO meals SET ?', {title: newMealReq.title, description: newMealReq.desc, datetime: newMealReq.datetime, max_amount: newMealReq.max_people, user_id: newMealReq.user}, function (error, results, fields) {
+function insertNewMeal(newMealImg, newMealReq, userId, res){
+    connection.query('INSERT INTO meals SET ?', {title: newMealReq.title, description: newMealReq.desc, datetime: newMealReq.datetime, max_amount: newMealReq.max_people, user_id: userId}, function (error, results, fields) {
         if(error){
             console.log(error);
+            if(newMealImg != undefined) fs.unlink(newMealImg.path);
             res.status(500).json({
                 status: {
                     query: 'Internal Server Error: Could not insert meal'
@@ -59,38 +60,44 @@ function insertNewMeal(newMealImg, newMealReq, res){
             }).end();
         } else if(results.affectedRows < 1) {
             console.log('Affected rows less than 1.');
-
+            if(newMealImg != undefined) fs.unlink(newMealImg.path);
             res.status(500).json({
                 status: {
                     query: 'Internal Server Error: Could not insert meal'
                 }
             }).end();
         }else{
-            handleNewMealImg(newMealImg, newMealReq, res, results.insertId);
+            handleNewMealImg(newMealImg, newMealReq, userId, res, results.insertId);
         }
     });
 }
 
 //Checks the image for the new meal and gives it a name
-function handleNewMealImg(newMealImg, newMealReq, res, mealId){
-    var imgName = 'undefined.png';
+function handleNewMealImg(newMealImg, newMealReq, userId, res, mealId){
     if(newMealImg != undefined){
         var tempPath = newMealImg.path;
         var extension = newMealImg.originalname.split('.').pop();
 
         var imgDate = new Date(newMealReq.datetime);
         var imgDateStr = imgDate.toISOString().replace(/(:)|(00.000Z)/g, '');
-        imgName = imgDateStr + '_' + newMealReq.user + '_' + newMealReq.title + '.' + extension;
+        var imgName = imgDateStr + '_' + userId + '_' + newMealReq.title + '.' + extension;
         
         var targetPath = path.resolve('./uploads/meal_img/' + imgName);
 
         insertImgDb(tempPath, targetPath, imgName, mealId, res);
+    }else{
+        res.status(400).json({
+            status: {
+                query: 'Bad Request: No image given. Meal created with NULL image.'
+            }
+        }).end();
     }
 }
 
 //Inserts imagename into DB and puts the image in the right folder
 function insertImgDb(tempPath, targetPath, imgName, mealId, res){
     fs.rename(tempPath, targetPath, function(error){
+        console.log('temp: ' + tempPath + ' - target: ' + targetPath);
         if(error) {
             console.log(error);
             res.status(500).json({
