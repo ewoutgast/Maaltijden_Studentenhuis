@@ -10,7 +10,7 @@
 For all endpoints below you must use this token in the header (`X-Access-Token`):
 
 - **New meal:** `POST [URL/meal]`
-    - Body: user, datetime (Y-m-d H:i:s), title, desc, max_people, image
+    - Body: datetime (Y-m-d H:i:s), title, desc, max_people, image
 - **Get all meals:** `GET [URL/meals]`
     - Return: title, amount (joined people), max_amount
 - **Get meal:** `GET [URL/meal/:id]`
