@@ -75,7 +75,6 @@ describe('newMeal API interface',function(){
             .set('X-Access-Token', token)
             .set('Content-Type', 'multipart/form-data')
             .attach('newMealImg', fs.readFileSync("./test/newMealTestImg/test1.png"), "test1.png")
-            .field('user', 3) // Should be user_id from login response!
             .field('datetime', '2030-01-20 18:00') //Please make datetime unique (but ALWAYS use imgFileNameYear as year)
             .field('title', 'pizza')
             .field('desc', 'Even wachten... PIZZA!')
@@ -88,13 +87,11 @@ describe('newMeal API interface',function(){
             });
         });
 
-        it('should not accept a new meal with a nonexistent user', function(done){
+        it('should give an error when sending no image (but does insert the meal)', function(done){
             chai.request(server)
             .post('/api/v1/meal/new')
             .set('X-Access-Token', token)
             .set('Content-Type', 'multipart/form-data')
-            .attach('newMealImg', fs.readFileSync("./test/newMealTestImg/test1.png"), "test1.png")
-            .field('user', 99999) // Should be user_id from login response!
             .field('datetime', '2030-01-20 20:00') //Please make datetime unique (but ALWAYS use imgFileNameYear as year)
             .field('title', 'pizza')
             .field('desc', 'Even wachten... PIZZA!')
@@ -104,7 +101,27 @@ describe('newMeal API interface',function(){
                 res.body.should.be.an('object');
                 res.body.should.have.property('status');
                 res.body.status.should.have.property('query');
-                res.body.status.query.should.equal('Bad Request: User does not exist');
+                res.body.status.query.should.equal('Bad Request: No image given. Meal created with NULL image.');
+                done();
+            });
+        });
+
+        it('should give an error when creating a new meal in the past', function(done){
+            chai.request(server)
+            .post('/api/v1/meal/new')
+            .set('X-Access-Token', token)
+            .set('Content-Type', 'multipart/form-data')
+            .attach('newMealImg', fs.readFileSync("./test/newMealTestImg/test1.png"), "test1.png")
+            .field('datetime', '2001-01-01 21:00') //Please make datetime unique (but ALWAYS use imgFileNameYear as year)
+            .field('title', 'pizza')
+            .field('desc', 'Even wachten... PIZZA!')
+            .field('max_people', 10)
+            .end(function (err, res) {  
+                res.should.have.status(400); 
+                res.body.should.be.an('object');
+                res.body.should.have.property('status');
+                res.body.status.should.have.property('query');
+                res.body.status.query.should.equal('Bad Request');
                 done();
             });
         });
