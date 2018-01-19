@@ -5,19 +5,11 @@ var fs = require('fs');
 module.exports = {
     newMeal(req, res, next) {
         var newMealReq = req.body;
+        var user = req.user;
 
-        if(newMealReq.user == undefined){
-            if(req.file != undefined) fs.unlink(req.file.path);
-            res.status(400).json({
-                status: {
-                    query: 'Bad Request: User has to be defined'
-                }
-            }).end();
-        }
+        var query = 'SELECT * FROM users WHERE id=?';
 
-        var query = 'SELECT * FROM users WHERE id=' + newMealReq.user;
-
-        connection.query(query, function (error, rows, fields) {
+        connection.query(query, user.id, function (error, rows, fields) {
             if(error){
                 if(req.file != undefined) fs.unlink(req.file.path);
                 next(error);
@@ -37,7 +29,7 @@ module.exports = {
                         }
                     }).end();
                 }else{
-                    insertNewMeal(req.file, newMealReq, res);
+                    insertNewMeal(req.file, newMealReq, user.id, res);
                 }
             }
         });
@@ -56,8 +48,8 @@ function checkNewMealReq(newMealReq){
 }
 
 //Inserts new meal into DB
-function insertNewMeal(newMealImg, newMealReq, res){
-    connection.query('INSERT INTO meals SET ?', {title: newMealReq.title, description: newMealReq.desc, datetime: newMealReq.datetime, max_amount: newMealReq.max_people, user_id: newMealReq.user}, function (error, results, fields) {
+function insertNewMeal(newMealImg, newMealReq, userId, res){
+    connection.query('INSERT INTO meals SET ?', {title: newMealReq.title, description: newMealReq.desc, datetime: newMealReq.datetime, max_amount: newMealReq.max_people, user_id: userId}, function (error, results, fields) {
         if(error){
             console.log(error);
             if(newMealImg != undefined) fs.unlink(newMealImg.path);
@@ -75,20 +67,20 @@ function insertNewMeal(newMealImg, newMealReq, res){
                 }
             }).end();
         }else{
-            handleNewMealImg(newMealImg, newMealReq, res, results.insertId);
+            handleNewMealImg(newMealImg, newMealReq, userId, res, results.insertId);
         }
     });
 }
 
 //Checks the image for the new meal and gives it a name
-function handleNewMealImg(newMealImg, newMealReq, res, mealId){
+function handleNewMealImg(newMealImg, newMealReq, userId, res, mealId){
     if(newMealImg != undefined){
         var tempPath = newMealImg.path;
         var extension = newMealImg.originalname.split('.').pop();
 
         var imgDate = new Date(newMealReq.datetime);
         var imgDateStr = imgDate.toISOString().replace(/(:)|(00.000Z)/g, '');
-        var imgName = imgDateStr + '_' + newMealReq.user + '_' + newMealReq.title + '.' + extension;
+        var imgName = imgDateStr + '_' + userId + '_' + newMealReq.title + '.' + extension;
         
         var targetPath = path.resolve('./uploads/meal_img/' + imgName);
 
